@@ -1,0 +1,161 @@
+Make sure they open their project throught he terminal using code .
+
+Make sure they have JS=requests-demo as root folder
+
+As part of the setup, have them disable auto imports
+
+--Walkthrough the different pages--
+
+1.  The server.js is representing our backend/server. Don't be intimidated by it. It just contains a bunch of code to run our server. 
+    We have a couple of packages that are being used (which we'll go into next week), 
+    a character array with information about characters,
+    and a handful of requests
+
+2.  The package.json is what tells us which dependencies are being used in the project,
+    axios, cors, and express. We'll cover cors and express next week. If you're using someone
+    elses project, and see a package.json, you can assume that there are going to be npm packages
+    that they used when creating said project. In this case, we just have to run npm i
+
+    Have them open a terminal and run npm i. They should see a node_modules and lock.json show up
+
+3.  The index.html has some basic setup inside of it - main section with some buttons and forms.
+    The important part is the script tags. Remind them that we want to have our axios script first
+    so the main.js has access to it.
+
+    Tell them not to worry about memorizing that script tag, you can save it or copy it later.
+
+4.  Tell them not to worry about the lock.json
+
+5.  Show the main.js. This is where we'll be doing the bulk of our work today. 
+    This is similar to what we did yesterday. Break it into sections, and add section for Step 3
+    
+    Step 1: Grab the element
+    Step 2: Write the function
+    Step 3: Combine them with event listeners
+
+-- Run Server -- 
+
+1.  Coding can be pretty picky. In general, our programs won't do anythign unless we tell them to.
+    This is exactly what happens with our servers. They won't run, and won't be able to recieve requests,
+    until we tell them to run
+
+    Run node server.js in the terminal
+
+    This will freeze our terminal, so we'll either need to cancel it or open a new terminal to run new commands
+
+-- Open with Live Server --
+
+Point out that the site isn't functional yet. We need to build out our Axios functions first.
+
+-- Start Demo --
+
+1.  Set up Base URL: http://localhost:4000
+
+2.  Briefly explain the innerHtml. It's like .textContent, except we can add full blocks of HTML elements.
+
+3.  Clear character function clears characters
+
+4.  Remind them that axios request are usually used inside of a function, and that function will
+    only run when we tell it to (usually with an addEventListener)
+
+5.  Set up getAllChars function
+
+    Walk through the setup of the axios request
+    - axios keyword
+    - axios method (get)
+    - Define parameters (aka which URL to hit)
+        - Type out baseURL first, then explain we can just use the variable from earlier
+        - Ask for what the last piece of a URL is (endpoint)
+            - Our endpoints are defined as part of our server, and they have their own 
+            functionality for when they are hit
+            - Show the endpoints inside server.js
+            - We want to get /characters
+    - Once we have the method and endpoint defined, we want to actually DO something with the
+    information we get back. We can specify that with our .then(). Remember that the .then() and
+    .catch() each take a callback function.
+        - Setup res => console.log(res)
+        - Setup .catch()
+
+    - You have written your first axios request!!!
+    
+6.  Set up event listener for getAllBtn
+    - Open console in browser and click Get All Characters buttons
+        - Explain that everything we see in this console.log is our res value from our .then()
+          THIS is the data that is being sent back from our server!
+        - Breakdown the res, and know that what we're primarily looking for is the data property
+    - Some of them might notice that we have a console log in our VSCoe as well. In a full-stack 
+    application, there will be two. Everything that is on the front end will be in the browser log,
+    and the backend will be in our VSCode log. Inside the /characters endpoint, we have a log set up.
+    - Your response data will ALWAYS be stored in the .data property! 
+    - How is it finding these characters? Show them the res.status.send
+
+7.  Head back to our getAllChars function and loop over the res.data
+    - For ease of use, create a characterArr varialbe for our res.data
+    - Inisde that loop, we're going to run our createCharacterCard function, and pass in 
+    our characterArr[i] as the argument
+    - Wait to see brains explode
+    - Break down the createCharacterCard function a little more
+        - The parameter is setup as 'char', and it assumes that we're going to pass in an object
+        - We create a new div element, and save it to the variable charCart
+        - We then access the .innerHTML property on charCard, and use dot-notation to add the values
+        into each element
+
+    - Reexplain the whole process as needed
+
+8. Show them how if we keep clicking the button, it keep appending them to the page. We can 
+    just add the clearCharacters funtion to the top of getAllChars to make sure that runs each time
+
+9. Next create a new axios request using a param to get a single character
+    - Show boilerplate for axios calls
+        - axios.methodGoesHere(`${baseURL}/endpointGoesHere`)
+            .then((res) => {
+            console.log(res.data)
+            })
+            .catch((error) => {
+            console.log(error)
+            })
+    - Fill out boilerplate
+        - Use the get method
+        - We can check our server to see which endpoint to use!
+        - Add endpoint of /character/${event.target.id}
+            - Show them in our HTML that each butten has an ID attribute. We can take that value
+            and put it inside our URL to act as the parameter
+            - Explain that this is how we could pass in each "name" as our endpoint
+        - Why aren't the buttons working??? We need an event listener
+            - We could set these up individually, or with a loop over our charBtns
+        - Show how we are able to console.log each of those individual characters now
+        - Ask if anyone has a guess to how we can get them to display
+        - Set up characterObj variable, and add createCharacterCard(characterObj) inside our .then
+
+10. Create getOldChars
+        - Use boilerplate for axios calls
+        - Look at server to find the /character endpoint
+        - We can attach a query to the end of our axios url with a /?
+        - Who remembers what we can use to get the current value of an input field? (.value)
+        - Set up event listener for ageForm and show how those show up in the console
+        - We can set up another for-loop to go over our oldChars array and run the createCharacterCard
+
+11. Create addNewChar
+        - This is going to be the most complicated part, because going to use multiple input fields 
+        and a new axios method that requires a body object.
+        - Working from the bottom up, address the Likes input field
+            - Create newLikes variable that spreads and splits the values of the newLikesText selector
+        - Create bodyObject variable
+            -   let newBody = {
+                firstName: newFirstInput.value,
+                lastName: newLastInput.value,
+                gender: newGenderDropDown.value,
+                age: newAgeInput.value,
+                likes: newLikes
+                }
+        - Create axios.post that takes in a our newBody object
+        - Depending on time, we can set up another loop to create character cards for res.data, 
+        OR inside the .then(), we can run  getAllChars. Do the loop so we don't have to duplicate
+        server requests
+
+12. Invoke getAllChars at the bottom of js to have it run automatically on load
+
+
+
+
+
